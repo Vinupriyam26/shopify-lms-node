@@ -14,10 +14,9 @@ import {
   ButtonGroup,
   Pagination
 } from "@shopify/polaris";
-import { useAppBridge } from "@shopify/app-bridge-react";
+import { useSafeAppBridge } from "../utils/useSafeAppBridge";
 import { useState, useEffect, useCallback } from "react";
 
-// Standard SVG Icons
 const EditIcon = () => (
   <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
     <path d="M13.875 2.5a2.125 2.125 0 0 1 3 3l-9.5 9.5-3.625.625.625-3.625 9.5-9.5z"/>
@@ -30,9 +29,16 @@ const DeleteIcon = () => (
   </svg>
 );
 
+const INITIAL_MOCK_COURSES = [
+  { id: 1, title: "Intro to Shopify App Development", instructor_name: "Vinupriya M", category: "Development", duration: "6 Hours", status: "Active" },
+  { id: 2, title: "Advanced Polaris UI Mastery", instructor_name: "John Doe", category: "Design", duration: "4 Hours", status: "Active" },
+  { id: 3, title: "GraphQL Admin API Deep Dive", instructor_name: "Sarah Connor", category: "Development", duration: "5 Hours", status: "Active" },
+  { id: 4, title: "Liquid Storefront Customization", instructor_name: "Alex Turner", category: "Storefront", duration: "3 Hours", status: "Draft" }
+];
+
 export default function CoursesPage() {
-  const shopify = useAppBridge();
-  const [courses, setCourses] = useState([]);
+  const shopify = useSafeAppBridge();
+  const [courses, setCourses] = useState(INITIAL_MOCK_COURSES);
   const [isLoading, setIsLoading] = useState(true);
   
   // Search & Pagination State
@@ -52,9 +58,11 @@ export default function CoursesPage() {
       if (response.ok) {
         const data = await response.json();
         setCourses(data);
+      } else {
+        setCourses(INITIAL_MOCK_COURSES);
       }
     } catch (error) {
-      console.error("Failed to fetch courses", error);
+      console.log("Using Mock Courses for Vercel Standalone Preview");
     } finally {
       setIsLoading(false);
     }
@@ -113,13 +121,23 @@ export default function CoursesPage() {
         body: JSON.stringify(formData)
       });
 
-      if (!response.ok) throw new Error("Failed to save course");
-
-      shopify.toast.show(`Course successfully ${formData.id ? 'updated' : 'created'}!`);
-      handleModalClose();
-      fetchCourses();
+      if (response.ok) {
+        shopify.toast.show(`Course successfully ${formData.id ? 'updated' : 'created'}!`);
+        fetchCourses();
+      } else {
+        throw new Error("Backend API unavailable");
+      }
     } catch (error) {
-      shopify.toast.show(error.message, { isError: true });
+      // Local Interactive Fallback for Standalone Vercel Preview
+      if (formData.id) {
+        setCourses(prev => prev.map(c => c.id === formData.id ? { ...formData } : c));
+      } else {
+        const newCourse = { ...formData, id: Date.now() };
+        setCourses(prev => [newCourse, ...prev]);
+      }
+      shopify.toast.show(`Course ${formData.id ? 'updated' : 'created'} (Demo Mode)!`);
+    } finally {
+      handleModalClose();
     }
   };
 
@@ -127,12 +145,16 @@ export default function CoursesPage() {
     if(confirm("Are you sure you want to delete this course?")) {
       try {
         const response = await fetch(`/api/courses/${id}`, { method: "DELETE" });
-        if (!response.ok) throw new Error("Failed to delete course");
-        shopify.toast.show("Course deleted");
-        fetchCourses();
+        if (response.ok) {
+          shopify.toast.show("Course deleted");
+          fetchCourses();
+          return;
+        }
       } catch(error) {
-        shopify.toast.show(error.message, { isError: true });
+        // Fallback for Demo
       }
+      setCourses(prev => prev.filter(c => c.id !== id));
+      shopify.toast.show("Course deleted (Demo Mode)");
     }
   };
 

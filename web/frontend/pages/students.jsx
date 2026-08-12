@@ -15,7 +15,7 @@ import {
   TextField,
   Pagination
 } from "@shopify/polaris";
-import { useAppBridge } from "@shopify/app-bridge-react";
+import { useSafeAppBridge } from "../utils/useSafeAppBridge";
 import { useState, useEffect, useCallback } from "react";
 
 const CheckIcon = () => (
@@ -24,11 +24,30 @@ const CheckIcon = () => (
   </svg>
 );
 
+const INITIAL_MOCK_STUDENTS = [
+  { id: 1, name: "Alice Smith", email: "alice@example.com" },
+  { id: 2, name: "Bob Johnson", email: "bob@example.com" },
+  { id: 3, name: "Charlie Davis", email: "charlie@example.com" },
+  { id: 4, name: "Diana Prince", email: "diana@example.com" }
+];
+
+const INITIAL_MOCK_ENROLLMENTS = [
+  { id: 101, student_id: 1, course_id: 1, student_name: "Alice Smith", course_title: "Intro to Shopify App Development", enrollment_date: "2026-08-10", status: "In Progress" },
+  { id: 102, student_id: 2, course_id: 2, student_name: "Bob Johnson", course_title: "Advanced Polaris UI Mastery", enrollment_date: "2026-08-09", status: "Completed" },
+  { id: 103, student_id: 3, course_id: 3, student_name: "Charlie Davis", course_title: "GraphQL Admin API Deep Dive", enrollment_date: "2026-08-08", status: "In Progress" }
+];
+
+const INITIAL_MOCK_COURSES = [
+  { id: 1, title: "Intro to Shopify App Development" },
+  { id: 2, title: "Advanced Polaris UI Mastery" },
+  { id: 3, title: "GraphQL Admin API Deep Dive" }
+];
+
 export default function StudentsPage() {
-  const shopify = useAppBridge();
-  const [students, setStudents] = useState([]);
-  const [enrollments, setEnrollments] = useState([]);
-  const [courses, setCourses] = useState([]);
+  const shopify = useSafeAppBridge();
+  const [students, setStudents] = useState(INITIAL_MOCK_STUDENTS);
+  const [enrollments, setEnrollments] = useState(INITIAL_MOCK_ENROLLMENTS);
+  const [courses, setCourses] = useState(INITIAL_MOCK_COURSES);
   const [isLoading, setIsLoading] = useState(true);
 
   // Search & Pagination State
@@ -54,7 +73,7 @@ export default function StudentsPage() {
       if (enrollmentsRes.ok) setEnrollments(await enrollmentsRes.json());
       if (coursesRes.ok) setCourses(await coursesRes.json());
     } catch (error) {
-      console.error("Failed to fetch data", error);
+      console.log("Using Mock Students for Vercel Standalone Preview");
     } finally {
       setIsLoading(false);
     }
@@ -101,13 +120,41 @@ export default function StudentsPage() {
 
       const responseData = await response.json();
 
-      if (!response.ok) throw new Error(responseData.error || "Failed to enroll student");
-
-      shopify.toast.show("Student successfully enrolled!");
-      handleModalClose();
-      fetchData();
+      if (response.ok) {
+        shopify.toast.show("Student successfully enrolled!");
+        fetchData();
+      } else {
+        throw new Error(responseData.error || "Failed to enroll student");
+      }
     } catch (error) {
-      shopify.toast.show(error.message, { isError: true });
+      // Local Interactive Fallback for Standalone Vercel Preview
+      const selectedStudent = students.find(s => s.id.toString() === formData.student_id.toString());
+      const selectedCourse = courses.find(c => c.id.toString() === formData.course_id.toString());
+
+      const isDuplicate = enrollments.some(e => 
+        e.student_id.toString() === formData.student_id.toString() && 
+        e.course_id.toString() === formData.course_id.toString()
+      );
+
+      if (isDuplicate) {
+        shopify.toast.show("Student is already enrolled in this course.", { isError: true });
+        return;
+      }
+
+      const newEnrollment = {
+        id: Date.now(),
+        student_id: formData.student_id,
+        course_id: formData.course_id,
+        student_name: selectedStudent?.name || "Student",
+        course_title: selectedCourse?.title || "Course",
+        enrollment_date: new Date().toISOString().split('T')[0],
+        status: formData.status
+      };
+
+      setEnrollments(prev => [newEnrollment, ...prev]);
+      shopify.toast.show("Student successfully enrolled (Demo Mode)!");
+    } finally {
+      handleModalClose();
     }
   };
 
@@ -118,12 +165,16 @@ export default function StudentsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus })
       });
-      if (!response.ok) throw new Error("Failed to update status");
-      shopify.toast.show("Status updated");
-      fetchData();
+      if (response.ok) {
+        shopify.toast.show("Status updated");
+        fetchData();
+        return;
+      }
     } catch(error) {
-      shopify.toast.show(error.message, { isError: true });
+      // Fallback
     }
+    setEnrollments(prev => prev.map(e => e.id === id ? { ...e, status: newStatus } : e));
+    shopify.toast.show("Status updated (Demo Mode)");
   };
 
   const resourceName = { singular: 'enrollment', plural: 'enrollments' };

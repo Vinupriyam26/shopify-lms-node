@@ -9,16 +9,29 @@ import {
 import { TitleBar } from "@shopify/app-bridge-react";
 import { useState, useEffect } from "react";
 
+const MOCK_STATS = {
+  total_courses: 4,
+  total_students: 8,
+  total_enrollments: 12,
+  completed_enrollments: 5,
+  active_enrollments: 7,
+  recent_enrollments: [
+    { name: "Alice Smith", title: "Intro to Shopify App Development", enrollment_date: "2026-08-10" },
+    { name: "Bob Johnson", title: "Advanced Polaris UI Mastery", enrollment_date: "2026-08-09" },
+    { name: "Charlie Davis", title: "GraphQL Admin API Deep Dive", enrollment_date: "2026-08-08" },
+    { name: "Diana Prince", title: "Liquid Storefront Customization", enrollment_date: "2026-08-07" }
+  ]
+};
+
+const MOCK_SHOP = {
+  name: "Vinupriya's Dev Store",
+  email: "vinupriyaenova@gmail.com",
+  primaryDomain: { url: "vinupriya-sybft323.myshopify.com" }
+};
+
 export default function HomePage() {
-  const [stats, setStats] = useState({
-    total_courses: 0,
-    total_students: 0,
-    total_enrollments: 0,
-    completed_enrollments: 0,
-    active_enrollments: 0,
-    recent_enrollments: []
-  });
-  const [shopInfo, setShopInfo] = useState(null);
+  const [stats, setStats] = useState(MOCK_STATS);
+  const [shopInfo, setShopInfo] = useState(MOCK_SHOP);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -31,7 +44,9 @@ export default function HomePage() {
         if (statsRes.ok) setStats(await statsRes.json());
         if (shopRes.ok) setShopInfo(await shopRes.json());
       } catch (error) {
-        console.error("Failed to fetch dashboard data", error);
+        console.log("Using Mock Data for Vercel Standalone Preview");
+        setStats(MOCK_STATS);
+        setShopInfo(MOCK_SHOP);
       } finally {
         setIsLoading(false);
       }
@@ -39,7 +54,7 @@ export default function HomePage() {
     fetchData();
   }, []);
 
-  const recentRows = (stats.recent_enrollments || []).map((enrollment) => [
+  const recentRows = (stats?.recent_enrollments || MOCK_STATS.recent_enrollments).map((enrollment) => [
     enrollment.name,
     enrollment.title,
     new Date(enrollment.enrollment_date).toLocaleDateString()
