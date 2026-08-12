@@ -8,7 +8,7 @@ import { QueryProvider, PolarisProvider } from "./components";
 function CustomTopNav() {
   const location = useLocation();
   const currentPath = location.pathname;
-
+  // test
   return (
     <div style={{
       background: "#000000",
@@ -23,8 +23,8 @@ function CustomTopNav() {
         <span style={{ fontSize: "18px", fontWeight: "700", color: "#96bf48", letterSpacing: "0.5px", marginRight: "15px" }}>
           Shopify LMS
         </span>
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           style={{
             color: currentPath === "/" ? "#ffffff" : "#b0b0b0",
             textDecoration: "none",
@@ -37,8 +37,8 @@ function CustomTopNav() {
         >
           Dashboard
         </Link>
-        <Link 
-          to="/courses" 
+        <Link
+          to="/courses"
           style={{
             color: currentPath === "/courses" ? "#ffffff" : "#b0b0b0",
             textDecoration: "none",
@@ -51,8 +51,8 @@ function CustomTopNav() {
         >
           Courses
         </Link>
-        <Link 
-          to="/students" 
+        <Link
+          to="/students"
           style={{
             color: currentPath === "/students" ? "#ffffff" : "#b0b0b0",
             textDecoration: "none",
