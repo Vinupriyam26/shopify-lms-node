@@ -10,7 +10,6 @@
       ]
     }
   ],
-  "buildCommand": "npm install && cd web/frontend && npx vite build",
   "outputDirectory": "web/frontend/dist",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
