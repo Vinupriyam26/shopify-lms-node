@@ -57,7 +57,7 @@ export default function HomePage() {
     };
     fetchData();
   }, []);
-  // test llog
+
   const totalEnrollments = stats?.total_enrollments || 1;
   const completedEnrollments = stats?.completed_enrollments || 0;
   const completionRate = Math.round((completedEnrollments / totalEnrollments) * 100);
