@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "21c9a318f620e0956ded884ede415cff"
-application_url = "https://oorxd-2409-408d-1d8a-c60c-bd43-295f-b2c1-f6e0.free.pinggy.net"
+application_url = "https://shopify-lms-node-frontend-kjnloo8wl-vinupriyam26s-projects.vercel.app"
 embedded = true
 name = "vinupriyaapp"
 
@@ -13,7 +13,7 @@ use_legacy_install_flow = false
 
 [auth]
 redirect_urls = [
-  "https://oorxd-2409-408d-1d8a-c60c-bd43-295f-b2c1-f6e0.free.pinggy.net/auth.php"
+  "https://shopify-lms-node-frontend-kjnloo8wl-vinupriyam26s-projects.vercel.app/api/auth/callback"
 ]
 
 [webhooks]

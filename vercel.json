@@ -1,4 +1,15 @@
 {
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'self' https://admin.shopify.com https://*.myshopify.com;"
+        }
+      ]
+    }
+  ],
   "buildCommand": "cd web/frontend && npm install && npm run build",
   "outputDirectory": "web/frontend/dist",
   "rewrites": [
