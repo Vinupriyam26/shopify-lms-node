@@ -5,7 +5,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "shopify": "shopify",
-    "build": "npm run build --workspace=web/frontend",
+    "build": "cd web/frontend && npx vite build",
     "dev": "shopify app dev",
     "info": "shopify app info",
     "generate": "shopify app generate",
