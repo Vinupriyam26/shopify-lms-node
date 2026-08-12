@@ -80,11 +80,6 @@ export default function App() {
     <PolarisProvider>
       <BrowserRouter>
         <QueryProvider>
-          <NavMenu>
-            <a href="/" rel="home" />
-            <a href="/courses">Courses</a>
-            <a href="/students">Students</a>
-          </NavMenu>
           <CustomTopNav />
           <Routes pages={pages} />
         </QueryProvider>
