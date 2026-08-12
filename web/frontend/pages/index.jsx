@@ -57,7 +57,7 @@ export default function HomePage() {
     };
     fetchData();
   }, []);
-
+  // test llog
   const totalEnrollments = stats?.total_enrollments || 1;
   const completedEnrollments = stats?.completed_enrollments || 0;
   const completionRate = Math.round((completedEnrollments / totalEnrollments) * 100);
@@ -122,7 +122,7 @@ export default function HomePage() {
             </Stack>
           </Card>
         </Layout.Section>
-        
+
         <Layout.Section oneThird>
           <Card sectioned>
             <Stack vertical spacing="extraTight">
@@ -142,7 +142,7 @@ export default function HomePage() {
                 <ProgressBar progress={completionRate} status="primary" size="small" />
               </div>
               <Text color="subdued" variant="bodySm">
-                 {stats.completed_enrollments} Completed of {stats.total_enrollments} Total
+                {stats.completed_enrollments} Completed of {stats.total_enrollments} Total
               </Text>
             </Stack>
           </Card>
@@ -151,15 +151,15 @@ export default function HomePage() {
         {/* Recent Activity Table */}
         <Layout.Section>
           <Card title="Recent Student Enrollments" sectioned>
-             {recentRows.length > 0 ? (
-                <DataTable
-                  columnContentTypes={['text', 'text', 'text', 'text']}
-                  headings={['Student Name', 'Course Enrolled', 'Date', 'Status']}
-                  rows={recentRows}
-                />
-             ) : (
-                <Text as="p" color="subdued">No recent enrollments to show.</Text>
-             )}
+            {recentRows.length > 0 ? (
+              <DataTable
+                columnContentTypes={['text', 'text', 'text', 'text']}
+                headings={['Student Name', 'Course Enrolled', 'Date', 'Status']}
+                rows={recentRows}
+              />
+            ) : (
+              <Text as="p" color="subdued">No recent enrollments to show.</Text>
+            )}
           </Card>
         </Layout.Section>
       </Layout>
