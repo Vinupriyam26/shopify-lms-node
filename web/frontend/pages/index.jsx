@@ -62,7 +62,8 @@ export default function HomePage() {
   const completedEnrollments = stats?.completed_enrollments || 0;
   const completionRate = Math.round((completedEnrollments / totalEnrollments) * 100);
 
-  const recentRows = (stats?.recent_enrollments || MOCK_STATS.recent_enrollments).map((enrollment) => [
+  const recentRows = (stats?.recent_enrollments || MOCK_STATS.recent_enrollments).map((enrollment, index) => [
+    index + 1,
     enrollment.name,
     enrollment.title,
     new Date(enrollment.enrollment_date).toLocaleDateString(),
@@ -137,8 +138,8 @@ export default function HomePage() {
           <Card title="Recent Student Enrollments" sectioned>
             {recentRows.length > 0 ? (
               <DataTable
-                columnContentTypes={['text', 'text', 'text', 'text']}
-                headings={['Student Name', 'Course Enrolled', 'Date', 'Status']}
+                columnContentTypes={['numeric', 'text', 'text', 'text', 'text']}
+                headings={['S.No', 'Student Name', 'Course Enrolled', 'Date', 'Status']}
                 rows={recentRows}
               />
             ) : (

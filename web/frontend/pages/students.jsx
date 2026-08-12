@@ -3,7 +3,6 @@ import {
   Layout,
   Card,
   IndexTable,
-  useIndexResourceState,
   Text,
   Badge,
   Button,
@@ -92,8 +91,6 @@ export default function StudentsPage() {
   const totalPages = Math.ceil(filteredEnrollments.length / itemsPerPage) || 1;
   const paginatedEnrollments = filteredEnrollments.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  const { selectedResources, allResourcesSelected, handleSelectionChange } = useIndexResourceState(paginatedEnrollments);
-
   const openEnrollModal = () => {
     setFormData({ student_id: students[0]?.id || '', course_id: courses[0]?.id || '', status: 'In Progress' });
     setFormErrors({});
@@ -181,7 +178,10 @@ export default function StudentsPage() {
 
   const rowMarkup = paginatedEnrollments.map(
     (enrollment, index) => (
-      <IndexTable.Row id={enrollment.id.toString()} key={enrollment.id} position={index} selected={selectedResources.includes(enrollment.id.toString())}>
+      <IndexTable.Row id={enrollment.id.toString()} key={enrollment.id} position={index}>
+        <IndexTable.Cell>
+          <Text variant="bodyMd" fontWeight="bold" as="span">{(currentPage - 1) * itemsPerPage + index + 1}</Text>
+        </IndexTable.Cell>
         <IndexTable.Cell>
           <Text variant="bodyMd" fontWeight="bold" as="span">{enrollment.student_name}</Text>
         </IndexTable.Cell>
@@ -237,9 +237,9 @@ export default function StudentsPage() {
                   <IndexTable
                     resourceName={resourceName}
                     itemCount={filteredEnrollments.length}
-                    selectedItemsCount={allResourcesSelected ? 'All' : selectedResources.length}
-                    onSelectionChange={handleSelectionChange}
+                    selectable={false}
                     headings={[
+                      { title: 'S.No' },
                       { title: 'Student Name' },
                       { title: 'Course' },
                       { title: 'Enrollment Date' },

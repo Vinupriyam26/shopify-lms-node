@@ -3,7 +3,6 @@ import {
   Layout,
   Card,
   IndexTable,
-  useIndexResourceState,
   Text,
   Badge,
   Button,
@@ -81,8 +80,6 @@ export default function CoursesPage() {
 
   const totalPages = Math.ceil(filteredCourses.length / itemsPerPage) || 1;
   const paginatedCourses = filteredCourses.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
-  const { selectedResources, allResourcesSelected, handleSelectionChange } = useIndexResourceState(paginatedCourses);
 
   const openCreateModal = () => {
     setFormData({ id: null, title: '', instructor_name: '', category: '', duration: '', status: 'Active' });
@@ -162,7 +159,10 @@ export default function CoursesPage() {
 
   const rowMarkup = paginatedCourses.map(
     (course, index) => (
-      <IndexTable.Row id={course.id.toString()} key={course.id} position={index} selected={selectedResources.includes(course.id.toString())}>
+      <IndexTable.Row id={course.id.toString()} key={course.id} position={index}>
+        <IndexTable.Cell>
+          <Text variant="bodyMd" fontWeight="bold" as="span">{(currentPage - 1) * itemsPerPage + index + 1}</Text>
+        </IndexTable.Cell>
         <IndexTable.Cell>
           <Text variant="bodyMd" fontWeight="bold" as="span">{course.title}</Text>
         </IndexTable.Cell>
@@ -210,9 +210,9 @@ export default function CoursesPage() {
             <IndexTable
               resourceName={resourceName}
               itemCount={filteredCourses.length}
-              selectedItemsCount={allResourcesSelected ? 'All' : selectedResources.length}
-              onSelectionChange={handleSelectionChange}
+              selectable={false}
               headings={[
+                { title: 'S.No' },
                 { title: 'Title' },
                 { title: 'Instructor' },
                 { title: 'Category' },
