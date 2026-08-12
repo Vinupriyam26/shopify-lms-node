@@ -84,25 +84,9 @@ export default function HomePage() {
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "15px" }}>
               <div>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
-                  <span style={{ fontSize: "22px", fontWeight: "800", letterSpacing: "-0.5px" }}>
-                    {shopInfo ? `${shopInfo.name} Overview` : "LMS Control Center"}
-                  </span>
-                  <span style={{
-                    background: "rgba(150, 191, 72, 0.2)",
-                    color: "#96bf48",
-                    padding: "4px 10px",
-                    borderRadius: "20px",
-                    fontSize: "12px",
-                    fontWeight: "600",
-                    border: "1px solid rgba(150, 191, 72, 0.4)"
-                  }}>
-                    🟢 Live API & GraphQL Connected
-                  </span>
-                </div>
-                <p style={{ color: "#9CA3AF", fontSize: "14px", margin: 0 }}>
-                  Connected Email: <strong style={{ color: "#E5E7EB" }}>{shopInfo?.email}</strong> | Domain: <strong style={{ color: "#E5E7EB" }}>{shopInfo?.primaryDomain?.url}</strong>
-                </p>
+                <span style={{ fontSize: "22px", fontWeight: "800", letterSpacing: "-0.5px" }}>
+                  Learning Management System
+                </span>
               </div>
               <div style={{ display: "flex", gap: "10px" }}>
                 <Button primary onClick={() => navigate("/courses")}>Manage Courses</Button>
@@ -122,7 +106,7 @@ export default function HomePage() {
             </Stack>
           </Card>
         </Layout.Section>
-
+        
         <Layout.Section oneThird>
           <Card sectioned>
             <Stack vertical spacing="extraTight">
